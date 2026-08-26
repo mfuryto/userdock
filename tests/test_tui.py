@@ -1,6 +1,7 @@
 import asyncio
 
-from textual.widgets import Button, Checkbox, SelectionList
+from textual.containers import VerticalScroll
+from textual.widgets import Button, Select, SelectionList
 
 from userdock.screens import UserDialog
 from userdock.tui import UserDockApp
@@ -25,17 +26,42 @@ def test_tui_starts_in_read_only_mode():
 def test_user_dialog_fits_small_terminal():
     async def run() -> None:
         app = UserDockApp()
-        async with app.run_test(size=(80, 20)) as pilot:
-            await pilot.press("n")
+        async with app.run_test(size=(80, 14)) as pilot:
+            app.push_screen(
+                UserDialog(
+                    "Edit user",
+                    ("/bin/bash", "/bin/sh"),
+                    "/usr/sbin/nologin",
+                    name="testuser",
+                    shell="/bin/bash",
+                    editing=True,
+                    groups=tuple(f"group-{number:02}" for number in range(30)),
+                )
+            )
+            await pilot.pause()
             assert isinstance(app.screen, UserDialog)
             apply_button = app.screen.query_one("#apply", Button)
             groups = app.screen.query_one("#groups", SelectionList)
-            nologin = app.screen.query_one("#nologin", Checkbox)
-            assert apply_button.region.bottom <= app.screen.size.height
-            assert groups.region.bottom <= app.screen.size.height
+            shell = app.screen.query_one("#shell", Select)
+            home = app.screen.query_one("#home", Select)
+            form = app.screen.query_one("#user-form", VerticalScroll)
             assert app.screen.has_class("user-dialog")
-            assert app.screen.query_one("#shell").region.bottom <= app.screen.size.height
-            assert nologin.region.bottom <= groups.region.y
-            assert groups.region.bottom <= apply_button.region.y
+            assert form.allow_vertical_scroll
+            assert shell.virtual_region.bottom <= groups.virtual_region.y
+            shell.value = "/usr/sbin/nologin"
+            assert shell.value == "/usr/sbin/nologin"
+            assert home.disabled
+            assert groups.virtual_region.bottom <= apply_button.parent.virtual_region.y
+            assert groups.virtual_size.height > groups.size.height
+
+            groups.focus()
+            await pilot.press(*(["down"] * 15))
+            assert groups.highlighted == 15
+            assert groups.scroll_y > 0
+
+            apply_button.focus()
+            await pilot.pause()
+            assert apply_button.region.y >= 0
+            assert apply_button.region.bottom <= app.screen.size.height
 
     asyncio.run(run())

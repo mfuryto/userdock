@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.5 - 2026-08-26
+
+- Made the user form vertically scrollable on short terminal screens
+- Made the additional-groups list independently scrollable for many groups
+- Moved nologin into the login-shell selector
+- Replaced the home-directory checkbox with a clear create/do-not-create selector
+
 ## 1.0.4 - 2026-08-26
 
 - Fixed the nologin checkbox overlapping the additional-groups list

@@ -6,7 +6,7 @@ from typing import ClassVar
 
 from textual.app import ComposeResult
 from textual.binding import Binding
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.screen import ModalScreen
 from textual.widgets import (
     Button,
@@ -35,6 +35,11 @@ class Dialog(ModalScreen[object]):
     .dialog SelectionList { height: 3; border: round $panel; }
     .dialog Horizontal { height: 3; }
     .dialog Button { margin-right: 1; }
+    .user-dialog > #user-form {
+        width: 100%; max-width: 100%; height: 100%; max-height: 100%;
+        padding: 0 1; border: none; background: $surface;
+    }
+    .user-dialog #groups { height: 8; min-height: 3; }
     """
 
     def __init__(self) -> None:
@@ -112,8 +117,11 @@ class UserDialog(Dialog):
 
     def compose(self) -> ComposeResult:
         choices = [(path, path) for path in self.shells if path != self.nologin]
-        selected = self.shell if self.shell in dict(choices) else Select.BLANK
-        with Vertical():
+        if self.nologin is not None:
+            choices.append((f"No interactive login ({self.nologin})", self.nologin))
+        choice_values = {value for _, value in choices}
+        selected = self.shell if self.shell in choice_values else Select.BLANK
+        with VerticalScroll(id="user-form"):
             yield Label(self.dialog_title, classes="dialog-title")
             with Horizontal(classes="field-row"):
                 with Vertical(classes="field"):
@@ -124,21 +132,16 @@ class UserDialog(Dialog):
                 with Vertical(classes="field"):
                     yield Label("Full name")
                     yield Input(value=self.full_name, id="full-name")
+            yield Label("Home directory")
+            yield Select(
+                (("Create /home/USERNAME", True), ("Do not create", False)),
+                value=True,
+                allow_blank=False,
+                disabled=self.editing,
+                id="home",
+            )
             yield Label("Login shell")
             yield Select(choices, value=selected, allow_blank=False, id="shell")
-            with Horizontal(classes="check-row"):
-                yield Checkbox(
-                    "No interactive login",
-                    value=self.shell == self.nologin,
-                    disabled=self.nologin is None,
-                    id="nologin",
-                )
-                yield Checkbox(
-                    "Create home directory",
-                    value=True,
-                    disabled=self.editing,
-                    id="home",
-                )
             yield Label("Additional groups")
             yield SelectionList[str](
                 *(
@@ -156,17 +159,15 @@ class UserDialog(Dialog):
             self.dismiss(None)
             return
         shell = self.query_one("#shell", Select).value
-        no_login = self.query_one("#nologin", Checkbox).value
-        selected_shell = self.nologin if no_login else shell
-        if not isinstance(selected_shell, str):
+        if not isinstance(shell, str):
             self.notify("Select a login shell", severity="error")
             return
         self.dismiss(
             UserFormResult(
                 name=self.query_one("#username", Input).value.strip(),
                 full_name=self.query_one("#full-name", Input).value.strip(),
-                shell=selected_shell,
-                create_home=self.query_one("#home", Checkbox).value,
+                shell=shell,
+                create_home=self.query_one("#home", Select).value is True,
                 supplementary_groups=tuple(
                     sorted(self.query_one("#groups", SelectionList).selected)
                 ),
