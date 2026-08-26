@@ -4,7 +4,8 @@ UserDock 1.0 is a terminal interface and CLI for managing local Linux users and
 groups. It is designed for fast keyboard operation and conservative handling
 of privileged access.
 
-The 1.0 release is verified on Ubuntu and targets Debian-compatible systems.
+The 1.0 release is built on Ubuntu 22.04 LTS and targets Jammy and newer
+Debian-compatible systems on x86-64.
 The account core also detects Fedora/RHEL, Arch, SUSE, Alpine, and NixOS
 families, but these platforms are not advertised as verified until their test
 matrices and native packages are complete.
@@ -32,11 +33,11 @@ sudo userdock
 
 ## Install the standalone Linux release
 
-Download the `userdock` binary from the GitHub release, then install it for
+Download `userdock-linux-x86_64` from the GitHub release, then install it for
 root-only execution:
 
 ```bash
-sudo install -o root -g root -m 0750 userdock /usr/local/bin/userdock
+sudo install -o root -g root -m 0750 userdock-linux-x86_64 /usr/local/bin/userdock
 sudo userdock
 ```
 
@@ -67,7 +68,7 @@ sudo userdock groups list
 
 ## Development
 
-UserDock requires Python 3.11 or newer.
+UserDock requires Python 3.10 or newer.
 
 ```bash
 python3 -m venv .venv
@@ -87,4 +88,3 @@ scripts/        Release build and installation helpers
 ```
 
 Security issues should be reported privately as described in `SECURITY.md`.
-

@@ -1,10 +1,10 @@
 """Domain models used by both the CLI and the future TUI."""
 
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 
-class GroupCategory(StrEnum):
+class GroupCategory(str, Enum):
     USER = "user"
     ACCESS = "access"
     INTERNAL = "internal"

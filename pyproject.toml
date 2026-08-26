@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "userdock"
-version = "1.0.0"
+version = "1.0.1"
 description = "A simple TUI/CLI for managing local Linux users and groups"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 authors = [
   { name = "UserDock contributors" },
 ]

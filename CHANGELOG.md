@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 - 2026-08-26
+
+- Restored compatibility with Python 3.10
+- Built the standalone Linux binary on Ubuntu 22.04 LTS
+- Added a release workflow that keeps future Linux binaries compatible with
+  Jammy and newer glibc-based distributions
+- Added Ubuntu 22.04 and Python 3.10 to continuous integration
+
 ## 1.0.0 - 2026-08-26
 
 - Terminal interface for local Linux users and groups
@@ -11,4 +19,3 @@
 - Conservative distribution and account-policy detection
 - Administrator-only execution and guarded home-directory removal
 - Script-friendly read-only CLI commands
-
