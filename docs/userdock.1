@@ -1,0 +1,38 @@
+.TH USERDOCK 1 "August 2026" "UserDock 1.0.3" "System Administration"
+.SH NAME
+userdock \- manage local Linux users and groups
+.SH SYNOPSIS
+.B sudo userdock
+.br
+.B sudo userdock users list
+.br
+.B sudo userdock users show
+.I USERNAME
+.br
+.B sudo userdock groups list
+.br
+.B sudo userdock system doctor
+.SH DESCRIPTION
+UserDock is a keyboard-first terminal interface and command-line tool for
+administering local Linux users, groups, login shells, supplementary group
+memberships, and account access.
+.PP
+UserDock requires effective root privileges and is never installed setuid.
+.SH OPTIONS
+.TP
+.B --help
+Show command help and exit.
+.TP
+.B --version
+Show the installed version and exit.
+.SH FILES
+.TP
+.I /etc/passwd
+Local user account information.
+.TP
+.I /etc/group
+Local group information.
+.SH AUTHOR
+UserDock contributors.
+.SH WWW
+https://github.com/mfuryto/userdock

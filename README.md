@@ -31,6 +31,22 @@ never installed setuid. Start it with:
 sudo userdock
 ```
 
+## Install on Debian or Ubuntu
+
+Download `userdock_1.0.3_amd64.deb` from the GitHub release, then install it
+with APT:
+
+```bash
+sudo rm -f /usr/local/bin/userdock  # only when replacing the old standalone install
+sudo apt install ./userdock_1.0.3_amd64.deb
+sudo userdock
+```
+
+APT registers the package and can later remove it with
+`sudo apt remove userdock`. UserDock still requires administrator privileges
+when it runs. The first command removes only the older manually installed
+standalone copy; omit it on a new installation.
+
 ## Install the standalone Linux release
 
 Download `userdock-linux-x86_64` from the GitHub release, then install it for

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3 - 2026-08-26
+
+- Added a native AMD64 Debian package for Ubuntu 22.04 LTS and newer
+- Installed the packaged command system-wide in `/usr/bin`
+- Added Debian package metadata and a `userdock(1)` manual page
+
 ## 1.0.2 - 2026-08-26
 
 - Changed user creation and editing to a full-screen terminal view
