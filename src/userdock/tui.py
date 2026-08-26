@@ -66,6 +66,11 @@ class UserDockApp(App[None]):
     .dialog SelectionList { height: 3; border: round $panel; }
     .dialog Horizontal { height: 3; }
     .dialog Button { margin-right: 1; }
+    .user-dialog { align: left top; }
+    .user-dialog > Vertical {
+        width: 100%; max-width: 100%; height: 100%; max-height: 100%;
+        padding: 0 1; border: none;
+    }
     """
 
     BINDINGS: ClassVar[list[Binding]] = [

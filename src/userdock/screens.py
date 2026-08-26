@@ -99,6 +99,7 @@ class UserDialog(Dialog):
         selected_groups: tuple[str, ...] = (),
     ) -> None:
         super().__init__()
+        self.add_class("user-dialog")
         self.dialog_title = title
         self.shells = shells
         self.nologin = nologin

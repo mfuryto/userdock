@@ -25,12 +25,14 @@ def test_tui_starts_in_read_only_mode():
 def test_user_dialog_fits_small_terminal():
     async def run() -> None:
         app = UserDockApp()
-        async with app.run_test(size=(80, 24)) as pilot:
+        async with app.run_test(size=(80, 20)) as pilot:
             await pilot.press("n")
             assert isinstance(app.screen, UserDialog)
             apply_button = app.screen.query_one("#apply", Button)
             groups = app.screen.query_one("#groups", SelectionList)
             assert apply_button.region.bottom <= app.screen.size.height
             assert groups.region.bottom <= app.screen.size.height
+            assert app.screen.has_class("user-dialog")
+            assert app.screen.query_one("#shell").region.bottom <= app.screen.size.height
 
     asyncio.run(run())

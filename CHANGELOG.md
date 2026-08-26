@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2 - 2026-08-26
+
+- Changed user creation and editing to a full-screen terminal view
+- Kept login shell, nologin, supplementary groups, and actions visible in an
+  80×20 terminal
+
 ## 1.0.1 - 2026-08-26
 
 - Restored compatibility with Python 3.10

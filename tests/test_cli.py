@@ -16,7 +16,7 @@ def test_cli_reports_version(capsys):
     except SystemExit as error:
         assert error.code == 0
 
-    assert "userdock 1.0.1" in capsys.readouterr().out
+    assert "userdock 1.0.2" in capsys.readouterr().out
 
 
 def test_cli_requires_administrator_privileges(monkeypatch, capsys):
