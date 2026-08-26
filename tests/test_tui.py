@@ -3,7 +3,7 @@ import asyncio
 from textual.containers import VerticalScroll
 from textual.widgets import Button, Select, SelectionList
 
-from userdock.screens import UserDialog
+from userdock.screens import PasswordDialog, UserDialog, UserFormResult
 from userdock.tui import UserDockApp
 
 
@@ -21,6 +21,15 @@ def test_tui_starts_in_read_only_mode():
             assert app.query_one("#groups-table").has_focus
 
     asyncio.run(run())
+
+
+def test_delete_has_mac_friendly_shortcut():
+    delete_keys = {
+        binding.key
+        for binding in UserDockApp.BINDINGS
+        if binding.action == "delete_record"
+    }
+    assert delete_keys == {"d", "delete"}
 
 
 def test_user_dialog_fits_small_terminal():
@@ -65,3 +74,34 @@ def test_user_dialog_fits_small_terminal():
             assert apply_button.region.bottom <= app.screen.size.height
 
     asyncio.run(run())
+
+
+def test_password_dialog_masks_both_password_fields():
+    async def run() -> None:
+        app = UserDockApp()
+        async with app.run_test() as pilot:
+            app.push_screen(PasswordDialog("alice"))
+            await pilot.pause()
+            assert app.screen.query_one("#password").password
+            assert app.screen.query_one("#confirm-password").password
+
+    asyncio.run(run())
+
+
+def test_successful_user_creation_opens_password_dialog(monkeypatch):
+    app = UserDockApp()
+    opened = []
+    monkeypatch.setattr(app, "_change", lambda operation, success: True)
+    monkeypatch.setattr(
+        app,
+        "push_screen",
+        lambda screen, callback=None: opened.append((screen, callback)),
+    )
+
+    app._perform_create_user(
+        UserFormResult("alice", "Alice", "/bin/bash", True, ())
+    )
+
+    assert len(opened) == 1
+    assert isinstance(opened[0][0], PasswordDialog)
+    assert opened[0][0].username == "alice"

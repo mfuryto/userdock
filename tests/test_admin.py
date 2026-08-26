@@ -50,6 +50,30 @@ def test_user_lock_and_delete_commands():
     ]
 
 
+def test_password_is_sent_only_through_standard_input():
+    commands: list[tuple[str, ...]] = []
+    secret_calls: list[tuple[tuple[str, ...], str]] = []
+
+    def run_secret(command, secret_input):
+        secret_calls.append((tuple(command), secret_input))
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    admin = RootAdmin(recorder(commands), run_secret)
+    admin.set_password("alice", "correct horse battery staple", True)
+
+    assert secret_calls == [
+        (("chpasswd",), "alice:correct horse battery staple\n")
+    ]
+    assert commands == [("chage", "--lastday", "0", "--", "alice")]
+    assert all("correct horse" not in argument for command in commands for argument in command)
+
+
+def test_password_cannot_be_empty():
+    admin = RootAdmin(recorder([]))
+    with pytest.raises(AdminError, match="cannot be empty"):
+        admin.set_password("alice", "")
+
+
 def test_refuses_unsafe_home_removal():
     admin = RootAdmin(recorder([]))
     with pytest.raises(AdminError, match="unsafe home"):

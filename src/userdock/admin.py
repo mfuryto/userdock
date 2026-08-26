@@ -9,6 +9,7 @@ from pathlib import Path
 
 NAME_PATTERN = re.compile(r"^[a-z_][a-z0-9_-]{0,30}\$?$", re.ASCII)
 CommandRunner = Callable[[Sequence[str]], subprocess.CompletedProcess[str]]
+SecretCommandRunner = Callable[[Sequence[str], str], subprocess.CompletedProcess[str]]
 
 
 class AdminError(RuntimeError):
@@ -59,11 +60,24 @@ def _run(command: Sequence[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command, check=False, capture_output=True, text=True)
 
 
+def _run_secret(
+    command: Sequence[str], secret_input: str
+) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        command,
+        check=False,
+        capture_output=True,
+        text=True,
+        input=secret_input,
+    )
+
+
 @dataclass(slots=True)
 class AccountAdmin:
     """Execute narrowly scoped account tools; the TUI never constructs commands."""
 
     runner: CommandRunner = _run
+    secret_runner: SecretCommandRunner = _run_secret
 
     @property
     def can_change(self) -> bool:
@@ -127,6 +141,21 @@ class AccountAdmin:
     def set_locked(self, name: str, locked: bool) -> None:
         option = "--lock" if locked else "--unlock"
         self._execute(("usermod", option, "--", validate_name(name)))
+
+    def set_password(
+        self, name: str, password: str, expire_on_next_login: bool = False
+    ) -> None:
+        username = validate_name(name)
+        if not password:
+            raise AdminError("Password cannot be empty.")
+        if not self.can_change:
+            raise AdminError("Administrator access is required to make changes.")
+        result = self.secret_runner(("chpasswd",), f"{username}:{password}\n")
+        if result.returncode:
+            message = result.stderr.strip() or result.stdout.strip() or "Command failed"
+            raise AdminError(message)
+        if expire_on_next_login:
+            self._execute(("chage", "--lastday", "0", "--", username))
 
     def delete_user(
         self, name: str, remove_home: bool = False, home: str | None = None

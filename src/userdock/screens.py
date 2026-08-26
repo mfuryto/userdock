@@ -248,6 +248,62 @@ class LockDialog(Dialog):
             self.dismiss(None)
 
 
+@dataclass(frozen=True, slots=True)
+class PasswordResult:
+    password: str
+    expire_on_next_login: bool
+
+
+class PasswordDialog(Dialog):
+    def __init__(self, username: str) -> None:
+        super().__init__()
+        self.username = username
+
+    def compose(self) -> ComposeResult:
+        with Vertical():
+            yield Label(f"Set password: {self.username}", classes="dialog-title")
+            yield Label("New password")
+            yield Input(password=True, id="password")
+            yield Label("Confirm password")
+            yield Input(password=True, id="confirm-password")
+            yield Checkbox(
+                "Require password change at next login",
+                id="expire-password",
+            )
+            with Horizontal():
+                yield Button("Apply", id="apply", variant="primary")
+                yield Button("Cancel", id="cancel")
+
+    def on_mount(self) -> None:
+        self.query_one("#password", Input).focus()
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        if event.input.id == "confirm-password":
+            self._apply()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "apply":
+            self._apply()
+        else:
+            self.dismiss(None)
+
+    def _apply(self) -> None:
+        password = self.query_one("#password", Input).value
+        confirmation = self.query_one("#confirm-password", Input).value
+        if not password:
+            self.notify("Password cannot be empty", severity="error")
+            return
+        if password != confirmation:
+            self.notify("Passwords do not match", severity="error")
+            return
+        self.dismiss(
+            PasswordResult(
+                password,
+                self.query_one("#expire-password", Checkbox).value,
+            )
+        )
+
+
 class MembershipDialog(Dialog):
     """Toggle group membership with an extra step for access groups."""
 

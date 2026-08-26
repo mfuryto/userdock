@@ -13,6 +13,7 @@ matrices and native packages are complete.
 ## Features
 
 - Create, edit, lock, unlock, and delete local users
+- Set passwords securely and require a password change at the next login
 - Select login shells or disable interactive login with `nologin`
 - Assign supplementary groups while creating or editing users
 - Create, rename, manage membership in, and delete user groups
@@ -33,12 +34,12 @@ sudo userdock
 
 ## Install on Debian or Ubuntu
 
-Download `userdock_1.0.5_amd64.deb` from the GitHub release, then install it
+Download `userdock_1.0.6_amd64.deb` from the GitHub release, then install it
 with APT:
 
 ```bash
 sudo rm -f /usr/local/bin/userdock  # only when replacing the old standalone install
-sudo apt install ./userdock_1.0.5_amd64.deb
+sudo apt install ./userdock_1.0.6_amd64.deb
 sudo userdock
 ```
 
@@ -68,7 +69,8 @@ The standalone x86-64 binary contains its Python runtime and dependencies.
 - `Enter`: manage membership in the selected group
 - `Space`: toggle a selection or group membership
 - `l`: lock or unlock the selected user
-- `Delete`: delete the selected editable record
+- `p`: set or change the selected user's password
+- `d` (or `Delete`): delete the selected editable record
 - `s`: show or hide internal system entries
 - `r`: refresh account data
 - `q`: quit

@@ -17,6 +17,8 @@ from userdock.screens import (
     LockDialog,
     MembershipDialog,
     NameDialog,
+    PasswordDialog,
+    PasswordResult,
     UserDialog,
     UserFormResult,
 )
@@ -81,7 +83,9 @@ class UserDockApp(App[None]):
         Binding("n", "new_record", "New"),
         Binding("e", "edit_record", "Edit"),
         Binding("l", "lock_user", "Lock / unlock"),
-        Binding("delete", "delete_record", "Delete"),
+        Binding("p", "set_password", "Set password"),
+        Binding("d", "delete_record", "Delete"),
+        Binding("delete", "delete_record", "Delete", show=False),
         Binding("enter", "open_record", "Open"),
         Binding("left", "previous_tab", "Previous tab", show=False, priority=True),
         Binding("right", "next_tab", "Next tab", show=False, priority=True),
@@ -204,14 +208,15 @@ class UserDockApp(App[None]):
             return None
         return str(table.get_row_at(table.cursor_row)[0])
 
-    def _change(self, operation, success: str) -> None:
+    def _change(self, operation, success: str) -> bool:
         try:
             operation()
         except AdminError as error:
             self.notify(str(error), title="Change not applied", severity="error")
-            return
+            return False
         self.refresh_data()
         self.notify(success)
+        return True
 
     def action_new_record(self) -> None:
         if self._active_tab() == "groups-tab":
@@ -263,7 +268,7 @@ class UserDockApp(App[None]):
         self._perform_create_user(result)
 
     def _perform_create_user(self, result: UserFormResult) -> None:
-        self._change(
+        created = self._change(
             lambda: self.admin.create_user(
                 result.name,
                 result.full_name,
@@ -273,6 +278,11 @@ class UserDockApp(App[None]):
             ),
             f"Created user {result.name}",
         )
+        if created:
+            self.push_screen(
+                PasswordDialog(result.name),
+                lambda password: self._set_password(result.name, password),
+            )
 
     def action_edit_record(self) -> None:
         if self._active_tab() == "groups-tab":
@@ -366,6 +376,28 @@ class UserDockApp(App[None]):
             self.notify("System users are read-only", severity="warning")
             return
         self.push_screen(LockDialog(user.name), lambda locked: self._set_locked(user.name, locked))
+
+    def action_set_password(self) -> None:
+        if self._active_tab() != "users-tab":
+            return
+        name = self._selected_name("#users-table")
+        user = get_user(name, detect_platform()) if name else None
+        if user is None or user.is_system:
+            self.notify("System users are read-only", severity="warning")
+            return
+        self.push_screen(
+            PasswordDialog(user.name),
+            lambda result: self._set_password(user.name, result),
+        )
+
+    def _set_password(self, name: str, result: PasswordResult | None) -> None:
+        if result is not None:
+            self._change(
+                lambda: self.admin.set_password(
+                    name, result.password, result.expire_on_next_login
+                ),
+                f"Changed password for {name}",
+            )
 
     def _set_locked(self, name: str, locked: bool | None) -> None:
         if locked is not None:

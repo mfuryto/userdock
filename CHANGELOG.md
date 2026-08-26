@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.6 - 2026-08-26
+
+- Added secure password setting and password confirmation for regular users
+- Added an option to require a password change at the next login
+- Opened password setup automatically after successful user creation
+- Added `d` as a Mac-friendly delete shortcut while retaining the Delete key
+
 ## 1.0.5 - 2026-08-26
 
 - Made the user form vertically scrollable on short terminal screens
