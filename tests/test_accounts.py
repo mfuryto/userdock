@@ -1,10 +1,17 @@
 import grp
 import pwd
 
-from userdock.accounts import classify_group, list_users
+from userdock.accounts import classify_group, list_users, login_allowed
 from userdock.models import GroupCategory, PlatformInfo
 
 PLATFORM = PlatformInfo("test", "Test Linux", "debian", 1000, 1000)
+
+
+def test_login_status_recognizes_common_disabled_shells():
+    assert login_allowed("/bin/bash") is True
+    assert login_allowed("/usr/sbin/nologin") is False
+    assert login_allowed("/sbin/nologin") is False
+    assert login_allowed("/bin/false") is False
 
 
 def test_access_group_is_not_hidden_by_low_gid():

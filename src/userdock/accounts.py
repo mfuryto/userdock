@@ -12,6 +12,18 @@ ACCESS_GROUPS = frozenset({
     "render", "sambashare", "scanner", "storage", "sudo", "systemd-journal",
     "vboxusers", "video", "wheel", "wireshark",
 })
+NO_LOGIN_SHELLS = frozenset({
+    "/bin/false",
+    "/sbin/nologin",
+    "/usr/bin/false",
+    "/usr/bin/nologin",
+    "/usr/sbin/nologin",
+})
+
+
+def login_allowed(shell: str) -> bool:
+    """Return whether a passwd shell permits an interactive login."""
+    return shell not in NO_LOGIN_SHELLS
 
 
 def classify_group(name: str, gid: int, platform: PlatformInfo) -> GroupCategory:

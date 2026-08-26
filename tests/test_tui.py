@@ -13,6 +13,7 @@ def test_tui_starts_in_read_only_mode():
         async with app.run_test() as pilot:
             status = app.query_one("#status-line")
             assert "Read-only mode" in str(status.renderable)
+            assert len(app.query_one("#users-table").columns) == 5
             assert app.show_system is False
             await pilot.press("s")
             assert app.show_system is True

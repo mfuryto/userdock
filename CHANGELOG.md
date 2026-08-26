@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7 - 2026-08-26
+
+- Added a Login Yes/No column to the user list
+- Recognized common `nologin` and `false` shell paths across distributions
+
 ## 1.0.6 - 2026-08-26
 
 - Added secure password setting and password confirmation for regular users

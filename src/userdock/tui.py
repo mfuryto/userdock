@@ -6,7 +6,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import DataTable, Footer, Header, Static, TabbedContent, TabPane
 
-from userdock.accounts import get_user, list_groups, list_users
+from userdock.accounts import get_user, list_groups, list_users, login_allowed
 from userdock.admin import AccountAdmin, AdminError, available_shells, detect_nologin
 from userdock.models import GroupCategory
 from userdock.platform import detect_platform, is_linux
@@ -111,7 +111,7 @@ class UserDockApp(App[None]):
     def on_mount(self) -> None:
         users = self.query_one("#users-table", DataTable)
         users.cursor_type = "row"
-        users.add_columns("Name", "UID", "Type", "Groups")
+        users.add_columns("Name", "UID", "Type", "Login", "Groups")
         groups = self.query_one("#groups-table", DataTable)
         groups.cursor_type = "row"
         groups.add_columns("Name", "GID", "Category", "Members")
@@ -129,6 +129,7 @@ class UserDockApp(App[None]):
                 user.name,
                 str(user.uid),
                 "System" if user.is_system else "User",
+                "Yes" if login_allowed(user.shell) else "No",
                 ", ".join(user.groups) or "—",
                 key=user.name,
             )
