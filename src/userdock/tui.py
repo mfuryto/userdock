@@ -62,7 +62,7 @@ class UserDockApp(App[None]):
     .dialog .field-row { height: 4; }
     .dialog .field { width: 1fr; height: 4; margin-right: 1; }
     .dialog .check-row { height: 1; }
-    .dialog .check-row Checkbox { width: 1fr; }
+    .dialog .check-row Checkbox { width: 1fr; height: 1; }
     .dialog SelectionList { height: 3; border: round $panel; }
     .dialog Horizontal { height: 3; }
     .dialog Button { margin-right: 1; }

@@ -33,12 +33,12 @@ sudo userdock
 
 ## Install on Debian or Ubuntu
 
-Download `userdock_1.0.3_amd64.deb` from the GitHub release, then install it
+Download `userdock_1.0.4_amd64.deb` from the GitHub release, then install it
 with APT:
 
 ```bash
 sudo rm -f /usr/local/bin/userdock  # only when replacing the old standalone install
-sudo apt install ./userdock_1.0.3_amd64.deb
+sudo apt install ./userdock_1.0.4_amd64.deb
 sudo userdock
 ```
 

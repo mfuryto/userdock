@@ -1,6 +1,6 @@
 import asyncio
 
-from textual.widgets import Button, SelectionList
+from textual.widgets import Button, Checkbox, SelectionList
 
 from userdock.screens import UserDialog
 from userdock.tui import UserDockApp
@@ -30,9 +30,12 @@ def test_user_dialog_fits_small_terminal():
             assert isinstance(app.screen, UserDialog)
             apply_button = app.screen.query_one("#apply", Button)
             groups = app.screen.query_one("#groups", SelectionList)
+            nologin = app.screen.query_one("#nologin", Checkbox)
             assert apply_button.region.bottom <= app.screen.size.height
             assert groups.region.bottom <= app.screen.size.height
             assert app.screen.has_class("user-dialog")
             assert app.screen.query_one("#shell").region.bottom <= app.screen.size.height
+            assert nologin.region.bottom <= groups.region.y
+            assert groups.region.bottom <= apply_button.region.y
 
     asyncio.run(run())

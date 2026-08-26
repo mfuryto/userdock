@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4 - 2026-08-26
+
+- Fixed the nologin checkbox overlapping the additional-groups list
+- Added a small-terminal regression test that rejects overlapping controls
+
 ## 1.0.3 - 2026-08-26
 
 - Added a native AMD64 Debian package for Ubuntu 22.04 LTS and newer
