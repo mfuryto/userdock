@@ -19,7 +19,7 @@ classifiers = [
   "Topic :: System :: Systems Administration",
 ]
 dependencies = [
-  "textual>=1.0,<2",
+  "textual>=1.0,<9",
 ]
 
 [project.optional-dependencies]
