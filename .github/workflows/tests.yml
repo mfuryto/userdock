@@ -19,7 +19,7 @@ jobs:
         with:
           repository: mfuryto/sambactl
           path: sambactl
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e ./sambactl -e '.[dev]'
