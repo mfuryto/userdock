@@ -1,0 +1,8 @@
+Unix username: alice
+Unix user ID: 1001
+Account Flags: [U          ]
+Home Directory: /home/alice
+Unix username: bob
+Unix user ID: 1002
+Account Flags: [DU         ]
+Home Directory: /srv/users/bob

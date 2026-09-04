@@ -1,9 +1,17 @@
 import asyncio
+from pathlib import Path
 
 from textual.containers import VerticalScroll
 from textual.widgets import Button, Select, SelectionList
 
-from userdock.screens import PasswordDialog, UserDialog, UserFormResult
+from userdock.samba import parse_samba_users
+from userdock.screens import (
+    ConfirmDialog,
+    PasswordDialog,
+    SambaShareDialog,
+    UserDialog,
+    UserFormResult,
+)
 from userdock.tui import UserDockApp
 
 
@@ -13,7 +21,9 @@ def test_tui_starts_in_read_only_mode():
         async with app.run_test() as pilot:
             status = app.query_one("#status-line")
             assert "Read-only mode" in str(status.renderable)
-            assert len(app.query_one("#users-table").columns) == 5
+            assert len(app.query_one("#users-table").columns) == 6
+            assert len(app.query_one("#samba-shares-table").columns) == 6
+            assert not app.query("#samba-users-table")
             assert app.show_system is False
             await pilot.press("s")
             assert app.show_system is True
@@ -106,3 +116,26 @@ def test_successful_user_creation_opens_password_dialog(monkeypatch):
     assert len(opened) == 1
     assert isinstance(opened[0][0], PasswordDialog)
     assert opened[0][0].username == "alice"
+
+
+def test_samba_share_tab_opens_share_dialogs(monkeypatch):
+    fixture_dir = Path(__file__).parent / "fixtures"
+    monkeypatch.setenv("USERDOCK_SAMBA_CONFIG", str(fixture_dir / "smb.conf"))
+    samba_users = parse_samba_users(
+        (fixture_dir / "pdbedit.txt").read_text(encoding="utf-8")
+    )
+    monkeypatch.setattr("userdock.tui.list_samba_users", lambda: samba_users)
+
+    async def run() -> None:
+        app = UserDockApp()
+        async with app.run_test() as pilot:
+            await pilot.press("right", "right", "n")
+            assert isinstance(app.screen, SambaShareDialog)
+            await pilot.press("escape", "e")
+            assert isinstance(app.screen, SambaShareDialog)
+            await pilot.press("escape", "d")
+            assert isinstance(app.screen, ConfirmDialog)
+            await pilot.press("escape", "right")
+            assert app.query_one("TabbedContent").active == "system-tab"
+
+    asyncio.run(run())

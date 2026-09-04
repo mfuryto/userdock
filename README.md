@@ -1,10 +1,10 @@
 # UserDock
 
-UserDock 1.0 is a terminal interface and CLI for managing local Linux users and
-groups. It is designed for fast keyboard operation and conservative handling
-of privileged access.
+UserDock is a keyboard-first terminal interface and CLI for managing local
+Linux users, groups, and optional Samba access. It is designed for fast
+operation and conservative handling of privileged access.
 
-The 1.0 release is built on Ubuntu 22.04 LTS and targets Jammy and newer
+The 1.1 release is built on Ubuntu 22.04 LTS and targets Jammy and newer
 Debian-compatible systems on x86-64.
 The account core also detects Fedora/RHEL, Arch, SUSE, Alpine, and NixOS
 families, but these platforms are not advertised as verified until their test
@@ -16,7 +16,12 @@ matrices and native packages are complete.
 - Set passwords securely and require a password change at the next login
 - Select login shells or disable interactive login with `nologin`
 - Assign supplementary groups while creating or editing users
+- Rename users while safely moving conventional home directories
 - Create, rename, manage membership in, and delete user groups
+- Optionally create and manage Samba logins alongside Linux users
+- Create private, group, and public Samba shares when Samba is installed
+- Apply collaborative permissions so members of a group share can edit files
+  created by other group members
 - Protect privileged access groups and hide internal system groups by default
 - Preserve hidden group membership during user edits
 - Guard removal of home directories and validate all account names
@@ -34,12 +39,12 @@ sudo userdock
 
 ## Install on Debian or Ubuntu
 
-Download `userdock_1.0.7_amd64.deb` from the GitHub release, then install it
+Download `userdock_1.1.0_amd64.deb` from the GitHub release, then install it
 with APT:
 
 ```bash
 sudo rm -f /usr/local/bin/userdock  # only when replacing the old standalone install
-sudo apt install ./userdock_1.0.7_amd64.deb
+sudo apt install ./userdock_1.1.0_amd64.deb
 sudo userdock
 ```
 

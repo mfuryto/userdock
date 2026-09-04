@@ -80,13 +80,16 @@ def test_refuses_unsafe_home_removal():
         admin.delete_user("alice", remove_home=True, home="/home")
 
 
-def test_user_commands_include_supplementary_groups():
+def test_user_commands_include_supplementary_groups(monkeypatch):
+    monkeypatch.setattr("userdock.admin.grp.getgrnam", lambda name: (_ for _ in ()).throw(KeyError(name)))
     commands: list[tuple[str, ...]] = []
     admin = RootAdmin(recorder(commands))
     admin.create_user(
         "alice", "Alice Example", "/bin/bash", True, ("developers", "video")
     )
-    admin.update_user("alice", "Alice Example", "/bin/bash", ("developers",))
+    admin.update_user(
+        "alice", "alice", "Alice Example", "/bin/bash", ("developers",), "/home/alice"
+    )
     assert commands == [
         (
             "useradd",

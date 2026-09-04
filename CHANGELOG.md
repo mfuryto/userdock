@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 - 2026-09-04
+
+- Integrated optional Samba account controls directly into the Users view
+- Added live Samba share administration without requiring Samba to be installed
+- Reused sambactl validation, backup, reload, and rollback for share changes
+- Added collaborative group-share permissions and optional private user shares
+- Synchronized Linux and Samba passwords through protected standard input
+- Added safe username, home-directory, Samba-account, and private-share renaming
+- Removed private Samba shares when their Linux user and home are deleted
+- Added new users to the `users` group when that group exists
+- Disabled controls that do not apply to the active view
+
 ## 1.0.7 - 2026-08-26
 
 - Added a Login Yes/No column to the user list

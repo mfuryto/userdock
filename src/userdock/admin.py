@@ -1,5 +1,6 @@
 """Validated system mutations for local users and groups."""
 
+import grp
 import os
 import re
 import subprocess
@@ -113,8 +114,16 @@ class AccountAdmin:
         if shell not in available_shells() and shell != detect_nologin():
             raise AdminError("Select a shell supported by this host.")
         command = ["useradd", "--comment", full_name, "--shell", shell]
-        if supplementary_groups:
-            groups = ",".join(validate_name(group) for group in supplementary_groups)
+        requested_groups = list(supplementary_groups)
+        try:
+            grp.getgrnam("users")
+        except KeyError:
+            pass
+        else:
+            if "users" not in requested_groups:
+                requested_groups.append("users")
+        if requested_groups:
+            groups = ",".join(validate_name(group) for group in requested_groups)
             command.extend(("--groups", groups))
         command.append("--create-home" if create_home else "--no-create-home")
         command.extend(("--", validate_name(name)))
@@ -122,21 +131,26 @@ class AccountAdmin:
 
     def update_user(
         self,
-        name: str,
+        old_name: str,
+        new_name: str,
         full_name: str,
         shell: str,
         supplementary_groups: Sequence[str],
+        old_home: str,
     ) -> None:
         if shell not in available_shells() and shell != detect_nologin():
             raise AdminError("Select a shell supported by this host.")
         groups = ",".join(validate_name(group) for group in supplementary_groups)
-        self._execute(
-            (
-                "usermod", "--comment", full_name, "--shell", shell,
-                "--groups", groups,
-                "--", validate_name(name),
-            )
-        )
+        old_name = validate_name(old_name)
+        new_name = validate_name(new_name)
+        command = ["usermod", "--comment", full_name, "--shell", shell,
+                   "--groups", groups]
+        if new_name != old_name:
+            command.extend(("--login", new_name))
+            if Path(old_home) == Path("/home") / old_name:
+                command.extend(("--home", str(Path("/home") / new_name), "--move-home"))
+        command.extend(("--", old_name))
+        self._execute(command)
 
     def set_locked(self, name: str, locked: bool) -> None:
         option = "--lock" if locked else "--unlock"
