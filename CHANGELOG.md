@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 - 2026-09-04
+
+- Kept focused user-form controls visible on Ubuntu 22.04 and Python 3.10
+- Stabilized the small-terminal release validation
+
 ## 1.1.1 - 2026-09-04
 
 - Verified optional Samba behavior in clean Ubuntu build environments

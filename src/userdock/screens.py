@@ -4,6 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import ClassVar
 
+from textual import events
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
@@ -180,6 +181,9 @@ class UserDialog(Dialog):
             with Horizontal():
                 yield Button("Apply", id="apply", variant="primary")
                 yield Button("Cancel", id="cancel")
+
+    def on_descendant_focus(self, event: events.DescendantFocus) -> None:
+        event.widget.scroll_visible(animate=False, force=True)
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id != "apply":
