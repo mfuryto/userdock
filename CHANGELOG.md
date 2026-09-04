@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 - 2026-09-04
+
+- Verified optional Samba behavior in clean Ubuntu build environments
+- Fixed the release test setup when Samba is not installed
+
 ## 1.1.0 - 2026-09-04
 
 - Integrated optional Samba account controls directly into the Users view

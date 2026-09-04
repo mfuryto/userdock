@@ -79,6 +79,8 @@ class UserDockApp(App[None]):
         padding: 0 1; border: none; background: $surface;
     }
     .user-dialog #groups { height: 8; min-height: 3; }
+    .user-dialog Horizontal { height: 1; }
+    .user-dialog Button { height: 1; min-height: 1; }
     """
 
     BINDINGS: ClassVar[list[Binding]] = [

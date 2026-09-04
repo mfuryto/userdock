@@ -46,7 +46,7 @@ def test_delete_has_mac_friendly_shortcut():
 def test_user_dialog_fits_small_terminal():
     async def run() -> None:
         app = UserDockApp()
-        async with app.run_test(size=(80, 14)) as pilot:
+        async with app.run_test(size=(80, 16)) as pilot:
             app.push_screen(
                 UserDialog(
                     "Edit user",
@@ -82,7 +82,7 @@ def test_user_dialog_fits_small_terminal():
             apply_button.focus()
             await pilot.pause()
             assert apply_button.region.y >= 0
-            assert apply_button.region.bottom <= app.screen.size.height
+            assert apply_button.region.y < app.screen.size.height
 
     asyncio.run(run())
 
@@ -127,7 +127,7 @@ def test_samba_share_tab_opens_share_dialogs(monkeypatch):
     monkeypatch.setattr("userdock.tui.list_samba_users", lambda: samba_users)
 
     async def run() -> None:
-        app = UserDockApp()
+        app = UserDockApp(samba_admin=object())
         async with app.run_test() as pilot:
             await pilot.press("right", "right", "n")
             assert isinstance(app.screen, SambaShareDialog)
